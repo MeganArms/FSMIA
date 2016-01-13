@@ -40,8 +40,7 @@ if Option.include
 end
 
 BW = img_2 > threshold;
-BWpad = padarray(BW,[1 1],0,'both');
-CC = bwconncomp(BW2);
+CC = bwconncomp(BW);
 
 molPixelIdx = cell(1);
 l = 1;
