@@ -5,52 +5,42 @@ threshold = Option.threshold;
 R = Option.spotR;
 img = double(RawImage);
 [M,N] = size(img);
-% mid = floor(M/2)+1;
-% % high pass filtering to remove uneven background
-% F = fftshift(fft2(img));
-% F_sub = F;
-% F_sub(mid-2:mid+2,mid-2:mid+2) = 0;
-% F_sub(mid,mid) = F(mid,mid);
-% img_1 = ifft2(ifftshift(F_sub));
-% % apply median filter to remove single pixel noise
-% img_2 = medfilt2(img_1);
+if strcmp(Option.illumination,'on')
+    % High pass filtering to remove uneven background
+    [M,~] = size(img);
+    mid = floor(M/2)+1;
+    Img = fft2(img);
+    Img1 = fftshift(Img);
+    Img2 = Img1;
+    Img2(mid-3:mid+3,mid-3:mid+3) = min(min(Img1));
+    Img2(257,257) = Img1(257,257);
+    img1 = ifft2(ifftshift(Img2));
+    img12 = abs(img1);
+    img13 = img12-min(min(img12));
+    img14 = img13/max(max(img13));
+    % Mulitply pixels by the sum of their 8-connected neighbors to increase
+    % intensities of particles
+    img_2 = colfilt(img14,[3 3],'sliding',@colsp);
+else
+    img_2 = img;
+end
 if Option.exclude
     x1 = Option.exclude(1,1);
     y1 = Option.exclude(1,2);
     x2 = Option.exclude(2,1);
     y2 = Option.exclude(2,2);
-    img(x1:x2,y1:y2) = 0;
+    img_2(x1:x2,y1:y2) = 0;
 end
 if Option.include
     minval = Option.include(1,1);
     maxval = Option.include(1,2)-1;
-    I = img(minval:maxval, minval:maxval);
+    I = img_2(minval:maxval, minval:maxval);
     topad = (M - (maxval-minval+1))/2;
-    img = padarray(I,[topad topad],1000,'both');
+    img_2 = padarray(I,[topad topad],1000,'both');
 end
 
-se = strel('diamond',3);
-img_2 = imtophat(img,se);
 BW = img_2 > threshold;
-% BW2 = imerode(BW, strel('diamond',0));
-% Remove noise pixels above the threshold
-BWpad = padarray(BW,[1 1],0,'both');
-
-testmat1 = zeros(M+2,N+2); testmat1(1:end-2,1:end-2) = BW;
-testmat2 = zeros(M+2,N+2); testmat2(3:end,3:end) = BW;
-testmat3 = zeros(M+2,N+2); testmat3(3:end,1:end-2) = BW;
-testmat4 = zeros(M+2,N+2); testmat4(1:end-2,3:end) = BW;
-
-testmat5 = zeros(M+2,N+2); testmat5(3:end,2:end-1) = BW;
-testmat6 = zeros(M+2,N+2); testmat6(1:end-2,2:end-1) = BW;
-testmat7 = zeros(M+2,N+2); testmat7(2:end-1,3:end) = BW;
-testmat8 = zeros(M+2,N+2); testmat8(2:end-1,1:end-2) = BW;
-
-tallymat = BWpad + testmat1 + testmat2 + testmat3 + testmat4 + testmat5 ...
-    + testmat6 + testmat7 + testmat8;
-
-BW2 = BW.*(tallymat(2:end-1,2:end-1) > 1);
-CC = bwconncomp(BW2);
+CC = bwconncomp(BW);
 
 molPixelIdx = cell(1);
 l = 1;

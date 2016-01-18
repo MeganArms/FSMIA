@@ -9,6 +9,7 @@ function volIntegrals = intensitySigma(obj,varargin)
 
 Molecule = obj.Molecule;
 longTraj = obj.Result;
+pixelSize = obj.Option.pixelSize;
 % Analyze molecules that appear on multiple frames and get their average
 % intensities
 MoleculeIndices = (1:length(Molecule))';
@@ -19,7 +20,7 @@ for i = 1:length(longTraj)
     for j = 1:length(longTraj(i).trajectory)
         if ~isnan(longTraj(i).trajectory(j))
            mIndex = longTraj(i).trajectory(j);
-           individualIntegral(j,:) = fitVolume(mIndex,Molecule);
+           [individualIntegral(j,1), individualIntegral(j,2)] = fitVolume(mIndex,Molecule);
            individualSigma(j) = Molecule(mIndex).fit.sigma;
            MoleculesAnalyzed = MoleculesAnalyzed + MoleculeIndices.*(MoleculeIndices == longTraj(i).trajectory(j));
         end
@@ -44,13 +45,13 @@ end
     function [scaled, newVI] = VItransform(volIntegral, musigma, sdsigma)
         
         % Scale intensity integrals: Intensities were scaled over discrete bins of
-        % 160 x 160 nm, so must be scaled down to a point, i.e. divided by 25600
+        % 160 x 160 nm, so must be scaled down to a point, i.e. divided by pixelSize^2
         % nm^2. MEANSIGMA and SDSIGMA were manually determined by sampling
         % several image movie files, and this must done for each new
         % testing condition.
         
         scaled = volIntegral;
-        scaled(:,1:2) = volIntegral(:,1:2)./25600;
+        [scaled(:,1), scaled(:,2)] = volIntegral(:,1:2)./pixelSize^2;
         
         % Create a new matrix with only the molecules that are +/- three standard deviation from
         % the mean sigma fit value.
