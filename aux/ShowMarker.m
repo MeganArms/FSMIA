@@ -36,7 +36,7 @@ for j = 1:N
     end
 end
             
-[M,N] = size(img);
+[M,~] = size(img);
 if strcmp(Option.illumination,'on')
     % High pass filtering to remove uneven background
     mid = floor(M/2)+1;
@@ -55,8 +55,8 @@ if strcmp(Option.illumination,'on')
 else
     img_1 = img;
 end
-
-RGB = repmat(imadjust(uint16(img_1)),[1,1,3]);
+img2 = img_1*(2^16-1);
+RGB = repmat(imadjust(uint16(img2)),[1,1,3]);
 for i = 1:N
     RGB(pts(i,1)-2:pts(i,1)+2,pts(i,2),1) = 0;
     RGB(pts(i,1)-2:pts(i,1)+2,pts(i,2),2) = 65535;
@@ -70,4 +70,4 @@ for i = 1:length(pts)
     text((double(pts(i,2))+4),double(pts(i,1)),sprintf('%d',currentTraj(i)),'Color','g');
 end
 
-title(['Frame number ',num2str(index),' threshold = ',num2str(Option.threshold)],'Fontsize',16);
+title(['Frame number ',num2str(index)],'Fontsize',14);

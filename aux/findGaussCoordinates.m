@@ -27,18 +27,22 @@ for i = 1:length(Result)
             currentMolecule = previousMolecule; % If the current molecule is too dim, use the coordinates of the previous molecule
         else
             previousMolecule = currentMolecule; % If the current molecule is bright enough, save it as the previous molecule in case it goes dim in the next frame
-        end
-        try
-            % Save the precise coordinate for each of the molecules
+        end        
+        % Save the precise coordinate for each of the molecules
+        if isfield(Molecule,'fit')
             moleculeTrajectoryCoordinates(j,1) = cs*Molecule(currentMolecule).coordinate(1) ...
                 + ps*Molecule(currentMolecule).fit.y0;
             moleculeTrajectoryCoordinates(j,2) = cs*Molecule(currentMolecule).coordinate(2) ...
                 + ps*Molecule(currentMolecule).fit.x0;
-        catch
-            disp(num2str(currentMolecule))
+        elseif isfield(Molecule,'centroid')
+            moleculeTrajectoryCoordinates(j,1) = cs*Molecule(currentMolecule).coordinate(1) ...
+                + ps*Molecule(currentMolecule).centroid(1);
+            moleculeTrajectoryCoordinates(j,2) = cs*Molecule(currentMolecule).coordinate(2) ...
+                + ps*Molecule(currentMolecule).centroid(2);
         end
     end
     gaussCoordinates{i} = moleculeTrajectoryCoordinates;
+    obj.Molecule(moleculesInTrajectory(1)).Coords = moleculeTrajectoryCoordinates;
 end
 
 end

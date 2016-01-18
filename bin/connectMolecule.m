@@ -30,14 +30,23 @@ if le(x,x0+MovePixel) && ge(x,x0-MovePixel) && le(y,y0+MovePixel) && ge(y,y0-Mov
     else
         % m1 connects to two successive molecules
         if ~isempty(obj.Molecule(m1).To)
-            % if there are two neibors, find the closer one
+            % if there are two neighbors, find the closer one
             m3 = obj.Molecule(m1).To;
-            para1 = coeffvalues(obj.Molecule(m1).fit);
-            p1 = obj.Molecule(m1).coordinate*Option.pixelSize + [para1(3) para1(4)];
-            para2 = coeffvalues(obj.Molecule(m2).fit);
-            p2 = obj.Molecule(m2).coordinate*Option.pixelSize + [para2(3) para2(4)];
-            para3 = coeffvalues(obj.Molecule(m3).fit);
-            p3 = obj.Molecule(m3).coordinate*Option.pixelSize + [para3(3) para3(4)];
+            if isfield(obj.Molecule,'fit')
+                para1 = coeffvalues(obj.Molecule(m1).fit);
+                p1 = obj.Molecule(m1).coordinate*Option.pixelSize + [para1(3) para1(4)];
+                para2 = coeffvalues(obj.Molecule(m2).fit);
+                p2 = obj.Molecule(m2).coordinate*Option.pixelSize + [para2(3) para2(4)];
+                para3 = coeffvalues(obj.Molecule(m3).fit);
+                p3 = obj.Molecule(m3).coordinate*Option.pixelSize + [para3(3) para3(4)];
+            elseif isfield(obj.Molecule,'area')
+                para1 = obj.Molecule(m1).centroid;
+                p1 = obj.Molecule(m1).coordinate*Option.pixelSize + [para1(1) para1(2)];
+                para2 = obj.Molecule(m2).centroid;
+                p2 = obj.Molecule(m2).coordinate*Option.pixelSize + [para2(1) para2(2)];
+                para3 = obj.Molecule(m3).centroid;
+                p3 = obj.Molecule(m3).coordinate*Option.pixelSize + [para3(1) para3(2)];
+            end
             if pdist([p1;p2]) < pdist([p1;p3])
                 obj.Molecule(m1).To = m2;
                 obj.Molecule(m2).From = m1;
@@ -46,12 +55,21 @@ if le(x,x0+MovePixel) && ge(x,x0-MovePixel) && le(y,y0+MovePixel) && ge(y,y0-Mov
         % m2 connect to two previous molecules    
         else
             m3 = obj.Molecule(m2).From;
-            para1 = coeffvalues(obj.Molecule(m1).fit);
-            p1 = obj.Molecule(m1).coordinate*Option.pixelSize + [para1(3) para1(4)];
-            para2 = coeffvalues(obj.Molecule(m2).fit);
-            p2 = obj.Molecule(m2).coordinate*Option.pixelSize + [para2(3) para2(4)];
-            para3 = coeffvalues(obj.Molecule(m3).fit);
-            p3 = obj.Molecule(m3).coordinate*Option.pixelSize + [para3(3) para3(4)];
+            if isfield(obj.Molecule,'fit')
+                para1 = coeffvalues(obj.Molecule(m1).fit);
+                p1 = obj.Molecule(m1).coordinate*Option.pixelSize + [para1(3) para1(4)];
+                para2 = coeffvalues(obj.Molecule(m2).fit);
+                p2 = obj.Molecule(m2).coordinate*Option.pixelSize + [para2(3) para2(4)];
+                para3 = coeffvalues(obj.Molecule(m3).fit);
+                p3 = obj.Molecule(m3).coordinate*Option.pixelSize + [para3(3) para3(4)];
+            elseif isfield(obj.Molecule,'area')
+                para1 = obj.Molecule(m1).centroid;
+                p1 = obj.Molecule(m1).coordinate*Option.pixelSize + [para1(1) para1(2)];
+                para2 = obj.Molecule(m2).centroid;
+                p2 = obj.Molecule(m2).coordinate*Option.pixelSize + [para2(1) para2(2)];
+                para3 = obj.Molecule(m3).centroid;
+                p3 = obj.Molecule(m3).coordinate*Option.pixelSize + [para3(1) para3(2)];
+            end
             if pdist([p1;p2]) < pdist([p3;p2])
                 obj.Molecule(m1).To = m2;
                 obj.Molecule(m2).From = m1;
