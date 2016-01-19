@@ -26,9 +26,10 @@ classdef FSMIA < handle
                'Exclude region','Include only region',...
                'Connect distance threshold (nm)','Fitting (fast or slow)',...
                'Isolation Method (fast or slow)','Downsampling rate'...
-               'Illumination correction (on or off)','Background'};
+               'Illumination correction (on or off)','Background'...
+               'Wavelength (nm)','Numerical Aperture'};
            dlg_title = 'Set the options';
-           def = {'','5','160','','','0','slow','fast','1','off','1000'};
+           def = {'','5','160','','','0','slow','fast','1','off','1000','647','1.49'};
            answer = inputdlg(prompt,dlg_title,1,def);
            opt.threshold = str2double(answer{1});
            opt.spotR = str2double(answer{2});
@@ -51,6 +52,8 @@ classdef FSMIA < handle
            opt.ds = str2double(answer{9});
            opt.illumination = answer{10};
            opt.bg = str2double(answer{11});
+           opt.wavelength = str2double(answer{12});
+           opt.na = str2double(answer{13});
            obj.Option = opt;
        end
    end
