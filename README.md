@@ -8,14 +8,11 @@ Columbia University
 ## What is the purpose of this directory?
 The files here are designed to locate and parameterize fluorescent particles in an image or image sequence. 
 
-Input:  
-An ND2 or TIFF image. The image is processed in grayscale.
+Input: An ND2 or TIFF image. The image is processed in grayscale.
 
-Required:  
-MATLAB and Bio-Formats library `bfmatlab` (available in this directory or [here](https://www.openmicroscopy.org/site/support/bio-formats5.1/users/matlab/)).
+Required: MATLAB and Bio-Formats library `bfmatlab` (available in this directory or [here](https://www.openmicroscopy.org/site/support/bio-formats5.1/users/matlab/)).
 
-Output:  
-An FSMIA object with properties **Filename**, **Option**, **Molecule**, **Frame**, **Result**, and **Intensity**.
+Output: An FSMIA object with properties **Filename**, **Option**, **Molecule**, **Frame**, **Result**, and **Intensity**.
 
 Definitions:
 
@@ -37,12 +34,18 @@ Definitions:
 	* Wavelength: Excitation wavelength.
 	* Numerical aperture: Numerical aperture of the objective.
 - **Molecule**: structure with 6 fields whose length is the number of molecules found in the image or image sequence. The fields are:
-	* fit: the fit object that describes the point spread function of the particle.
-	* gof: the goodness of fit of the fit object to the point spread function.
+	* centroid: the cetroid of the region that is found to be above the threshold level (for fast fitting).
+	* volume: the total intensity counts above background over the area that is found to be above the threshold level (for fast fitting).
+	* area: the area in nm^2 that is found to be above the threshold level (for fast fitting).
+	* maxInt: the maximum intensity in the region where the particle was detected minus the backgroudn (for fast fitting). Or, it's the amplitude of the Gaussian fit to the point spread function (for slow fitting).
+	* fit: the fit object that describes the point spread function of the particle (for slow fitting).
+	* gof: the goodness of fit of the fit object to the point spread function (for slow fitting).
 	* coordinate: the `[i,j]` coordinates of the pixel that the particle can be found on.
 	* frame: frame number of the particle.
 	* To: the next frame number where the particle is found.
 	* From: the previous frame number where the particle is found.
+	* Coords: the subpixel coordinates of the particle trajectories, where the coordinates are given in microns. The origin is at `[i,j] = [1,1]`.
+	* Result: described below. The trajectories are stored additionally with the molecule whose index is the start of the trajectory.
 - **Frame**: structure with 1 field whose length is the number of frames in the image sequence. The one field is:
 	* MoleculeIndex: A vector indexing the particles found in that frame. Listing is continuous across frames.
 - **Result**: structure with 1 field whose length is the number of particles that appear for more than one consecutive frame. The one field is:
