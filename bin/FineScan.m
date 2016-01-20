@@ -36,14 +36,22 @@ for k = 1:length(molPixelIdx)
         edgeThreshold = Option.threshold;
         edgeImage = subImage; edgeImage(3:end-2, 3:end-2) = 0;
         subImage(edgeImage > edgeThreshold) = min(min(subImage));
-        BW_sub(edgeImage > edgeThreshold) = 0;
         centroid = regionprops(true(size(subImage)),subImage,'WeightedCentroid');
         s = centroid.WeightedCentroid(2)-R-1+0.5;
         t = centroid.WeightedCentroid(1)-R-1+0.5;
         obj.Molecule(NumMolecule+k).centroid = [s,t]*obj.Option.pixelSize;
-        obj.Molecule(NumMolecule+k).volume = sum(sum(subImage - Option.bg));
-        a = regionprops(BW_sub,'Area');    
-        obj.Molecule(NumMolecule+k).area = a.Area;
+        if N > 1
+            lengths = zeros(1,N);
+            for l = 1:N
+                lengths(l) = length(CC_sub.PixelIdxList);
+            end
+            [~,maxidx] = max(lengths);
+            pxlist = CC_sub.PixelIdxList{maxidx};
+        else
+            pxlist = CC_sub.PixelIdxList{1};
+        end
+        obj.Molecule(NumMolecule+k).volume = sum(sum(subImage(pxlist) - Option.bg));    
+        obj.Molecule(NumMolecule+k).area = length(pxlist)*Option.pixelSize^2;
         obj.Molecule(NumMolecule+k).maxInt = max(max(subImage));
     elseif strcmp(Option.fitting,'slow') && strcmp(Option.isolation,'fast')
         % Eliminate potential moelecules in ROI
