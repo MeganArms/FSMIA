@@ -1,4 +1,4 @@
-function volIntegrals = intensitySigma(obj,varargin)
+function volIntegrals = particleSize(obj,varargin)
 
 % Analyze the input Molecule file for the frequency of fluorescence intensities 
 % Input data should be the Molecule file.
@@ -15,17 +15,26 @@ pixelSize = obj.Option.pixelSize;
 MoleculeIndices = (1:length(Molecule))';
 MoleculesAnalyzed = zeros(length(Molecule),1); volIntegrals = zeros(length(longTraj),4);
 for i = 1:length(longTraj)
-    individualIntegral = zeros(length(longTraj(i).trajectory),2);
-    individualSigma = zeros(length(longTraj(i).trajectory),1);
+    Size = zeros(length(longTraj(i).trajectory),2);
+    Width = zeros(length(longTraj(i).trajectory),1);
     for j = 1:length(longTraj(i).trajectory)
         if ~isnan(longTraj(i).trajectory(j))
            mIndex = longTraj(i).trajectory(j);
-           [individualIntegral(j,1), individualIntegral(j,2)] = fitVolume(mIndex,Molecule);
-           individualSigma(j) = Molecule(mIndex).fit.sigma;
+           if isfield(Molecule,'fit')
+               Width(j) = Molecule(mIndex).fit.sigma;
+               [Size(j,1), Size(j,2)] = fitVolume(mIndex,Molecule);
+               obj.Molecule(mIndex).volume = Size(j,1);
+               obj.Molecule(mIndex).maxInt = Size(j,2);
+           elseif isfield(Molecule,'area')
+               a = Molecule(mIndex).area;
+               Width(j) = sqrt(a/pi);
+               Size(j,1) = Molecule(mIndex).volume;
+               Size(j,2) = Molecule(mIndex).maxInt;
+           end
            MoleculesAnalyzed = MoleculesAnalyzed + MoleculeIndices.*(MoleculeIndices == longTraj(i).trajectory(j));
         end
     end
-    volIntegrals(i,:) = [max(individualIntegral(:,1)), max(individualIntegral(:,2)), length(longTraj(i).trajectory), mean(individualSigma)];
+    volIntegrals(i,:) = [max(Size(:,1)), max(Size(:,2)), length(longTraj(i).trajectory), mean(Width)];
 end
 
 % Analyze molecules that appear on only one frame
@@ -35,8 +44,14 @@ starti = length(volIntegrals)+1;
 volIntegrals = [volIntegrals; zeros(length(MoleculesRemaining),4)];
 for i = starti:length(volIntegrals)
     mIndex = MoleculesRemaining(i-starti+1);
-    [volInt, maxInt] = fitVolume(mIndex, Molecule);
-    volIntegrals(i,:) = [volInt, maxInt, 1, Molecule(mIndex).fit.sigma];
+    if isfield(Molecule,'fit')
+        [volInt, maxInt] = fitVolume(mIndex, Molecule);
+        volIntegrals(i,:) = [volInt, maxInt, 1, Molecule(mIndex).fit.sigma];
+    elseif isfield(Molecule,'area')
+        volInt = Molecule(mIndex).volume;
+        maxInt = Molecule(mIndex).maxInt;
+        volIntegrals(i,:) = [volInt, maxInt, 1, sqrt(Molecule(mIndex).area/pi)];
+    end
 end
 
 % Scale the intensities to counts from counts*um^2
@@ -51,7 +66,8 @@ end
         % testing condition.
         
         scaled = volIntegral;
-        [scaled(:,1), scaled(:,2)] = volIntegral(:,1:2)./pixelSize^2;
+        scaled(:,1) = volIntegral(:,1)./pixelSize^2;
+        scaled(:,2) = volIntegral(:,2)./pixelSize^2;
         
         % Create a new matrix with only the molecules that are +/- three standard deviation from
         % the mean sigma fit value.
@@ -96,9 +112,6 @@ if length(varargin) >= 1 && strcmp(varargin{1},'on')
     subplot(1,2,2), hist(obj.Intensity(:,1),100,'FaceColor','c');
     xlabel('Intensity (a.u.)'),ylabel('f(Intensity)');
     title(obj.filename(end-52:end-32));
-%     edges = linspace(min(obj.Intensity(:,1)),max(obj.Intensity(:,1)));
-%     counts = histc(obj.Intensity,edges);
-%     subplot(1,2,2), plot(
 end
 
 % Get historgram of each fluorescence for each bin of visible time. Plot if

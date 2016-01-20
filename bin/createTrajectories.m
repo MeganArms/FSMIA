@@ -2,7 +2,7 @@ function createTrajectories(obj)
 % CREATETRAJECTORIES Connects molecules between frames to create a path
 % described by the molecule index number.
 % INPUT
-% - 
+% - OBJ: FSMIA object after running analyzestack.m
 
 Molecule = obj.Molecule;
 Frame = obj.Frame;
@@ -27,6 +27,7 @@ for i = 1:N2
         end
         path = nonzeros(temp);
         obj.Result(k).trajectory = path;
+        obj.Molecule(path(1)).Result = path;
         k = k+1;
     end
 end

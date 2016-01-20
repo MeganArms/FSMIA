@@ -1,4 +1,4 @@
-function [molPixelIdx,BW] = RoughScan(obj,RawImage)
+function [molPixelIdx,BW2] = RoughScan(obj,RawImage)
 
 Option = obj.Option;
 threshold = Option.threshold;
@@ -21,6 +21,7 @@ if strcmp(Option.illumination,'on')
     % Mulitply pixels by the sum of their 8-connected neighbors to increase
     % intensities of particles
     img_2 = colfilt(img14,[3 3],'sliding',@colsp);
+    threshold = mean(img_2(:)) + 3*std(double(img_2(:)));
 else
     img_2 = img;
 end
@@ -40,7 +41,23 @@ if Option.include
 end
 
 BW = img_2 > threshold;
-CC = bwconncomp(BW);
+
+BWpad = padarray(BW,[1 1],0,'both');                                                                                                                                                                                                                                                                                                      
+testmat1 = zeros(M+2,N+2); testmat1(1:end-2,1:end-2) = BW;
+testmat2 = zeros(M+2,N+2); testmat2(3:end,3:end) = BW;
+testmat3 = zeros(M+2,N+2); testmat3(3:end,1:end-2) = BW;
+testmat4 = zeros(M+2,N+2); testmat4(1:end-2,3:end) = BW;
+
+testmat5 = zeros(M+2,N+2); testmat5(3:end,2:end-1) = BW;
+testmat6 = zeros(M+2,N+2); testmat6(1:end-2,2:end-1) = BW;
+testmat7 = zeros(M+2,N+2); testmat7(2:end-1,3:end) = BW;
+testmat8 = zeros(M+2,N+2); testmat8(2:end-1,1:end-2) = BW;
+
+tallymat = BWpad + testmat1 + testmat2 + testmat3 + testmat4 + testmat5 ...                                                                                          
+    + testmat6 + testmat7 + testmat8;
+
+BW2 = BW.*(tallymat(2:end-1,2:end-1) > 1);
+CC = bwconncomp(BW2);
 
 molPixelIdx = cell(1);
 l = 1;

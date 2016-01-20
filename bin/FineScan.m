@@ -29,7 +29,23 @@ for k = 1:length(molPixelIdx)
             end
         end
     end
-    if strcmp(Option.isolation,'fast')
+    if strcmp(Option.fitting,'fast')
+        % Perform centroid fitting. Subtract the location of the center
+        % pixel to convert it to the distance from the center of the pixel.
+        % Eliminate potential moelecules in ROI
+        edgeThreshold = Option.threshold;
+        edgeImage = subImage; edgeImage(3:end-2, 3:end-2) = 0;
+        subImage(edgeImage > edgeThreshold) = min(min(subImage));
+        BW_sub(edgeImage > edgeThreshold) = 0;
+        centroid = regionprops(true(size(subImage)),subImage,'WeightedCentroid');
+        s = centroid.WeightedCentroid(2)-R-1+0.5;
+        t = centroid.WeightedCentroid(1)-R-1+0.5;
+        obj.Molecule(NumMolecule+k).centroid = [s,t]*obj.Option.pixelSize;
+        obj.Molecule(NumMolecule+k).volume = sum(sum(subImage - Option.bg));
+        a = regionprops(BW_sub,'Area');    
+        obj.Molecule(NumMolecule+k).area = a.Area;
+        obj.Molecule(NumMolecule+k).maxInt = max(max(subImage));
+    elseif strcmp(Option.fitting,'slow') && strcmp(Option.isolation,'fast')
         % Eliminate potential moelecules in ROI
         edgeThreshold = Option.threshold;
         edgeImage = subImage; edgeImage(3:end-2, 3:end-2) = 0;
@@ -55,7 +71,7 @@ for k = 1:length(molPixelIdx)
 %             end
 %         end
 %             
-    else
+    elseif strcmp(Option.fitting,'slow') && strcmp(Option.isolation,'slow')
         % Determine if neighbor molecule is in ROI and find edgeTH
         try
             [F1,G1] = fit2D(obj,subImage);
