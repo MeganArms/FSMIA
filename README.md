@@ -5,7 +5,7 @@ Department of Biomedical Engineering
 School of Engineering and Applied Science  
 Columbia University  
 
-What is the purpose of this directory?
+## What is the purpose of this directory?
 ======================================
 The files here are designed to locate and parameterize fluorescent particles in an image or image sequence. 
 
@@ -13,10 +13,10 @@ Input:
 An ND2 or TIFF image. The image is processed in grayscale.
 
 Required:  
-MATLAB and Bio-Formats library bfmatlab available [here](https://www.openmicroscopy.org/site/support/bio-formats5.1/users/matlab/)
+MATLAB and Bio-Formats library bfmatlab available [here](https://www.openmicroscopy.org/site/support/bio-formats5.1/users/matlab/).
 
 Output:  
-An FSMIA object with properties **Filename**, **Option**, **Molecule**, **Frame**, **Result**, and **Intensity**
+An FSMIA object with properties **Filename**, **Option**, **Molecule**, **Frame**, **Result**, and **Intensity**.
 
 Definitions:
 
@@ -25,13 +25,18 @@ Definitions:
 	* Threshold: level to make image binary.
 	* Spot radius: estimated radius of the point spread function of the particle in pixels. This sets the size of the subimage used for fitting.
 	* Pixel size_: size of a pixel in nanometers.
+	* * Include only region: `[min, max]`, where the included region is a centered square ranging from `i` and `j` coordinates `[min:max, min:max]`.
 	* Exclude region: `[i1, j1; i2, j2]` region in image or image sequence that will be set to zero, i.e. not be included in the analysis.
 	* Connect distance: the maximum distance between two particles on different frames at which they will still be considered the same particle (in nanometers).
+	* Fitting: Centroid ('fast') or Gaussian ('slow') fitting.
 	* Isolation Method: Set the method for insuring that two neighboring particles are not so close that they effect the fitting process. 
 		* ‘fast’ will set any pixel on the border of the subimage that is above the threshold level to the minimum of the subimage.
 		* ‘slow’ will attempt to fit any pixel on the border with a Gaussian to check if it is a particle. If it is a particle, it will set the	pixel to the minimum of the subimage.
 	* Downsampling rate: Set this to greater than 1 to reduce the number of frames analyzed. For example, if the rate were 5, every fifth frame would be analyzed.
-	* Include only region: `[min, max]`, where the included region is a centered square ranging from `i` and `j` coordinates `[min:max, min:max]`.
+	* Illumination: Correct for uneven illumination ('on') or assume a uniform background illumination ('off').
+	* Background: Estimated or measured background level in counts.
+	* Wavelength: Excitation wavelength.
+	* Numerical aperture: Numerical aperture of the objective.
 - **Molecule**: structure with 6 fields whose length is the number of molecules found in the image or image sequence. The fields are:
 	* fit: the fit object that describes the point spread function of the particle.
 	* gof: the goodness of fit of the fit object to the point spread function.
@@ -46,10 +51,10 @@ Definitions:
 - **Intensity**: a matrix whose length is the number of particles that appear on more than one frame consecutively. The first column is the maximum volume integral of the particle over all the frames. The second column is the maximum maximum intensity of the volume integral over all the frames. The third column is the number of frames that the particle appears on consecutively. The fourth column is standard deviation of the fit to the point spread function.
 
 
-Quick Start Guide to FSMIA
+## Quick Start Guide to FSMIA
 ==========================
 
-1. Run in the command window: 
+### Filter image to set threshold 
 ```
 FilterGUI
 ```
@@ -60,13 +65,13 @@ FilterGUI
 - Click OK to filter.
 - The recommended threshold will be output to the command window.
 
-2. Run in the command window:
+### Initialize FSMIA object
 ```
 movie1 = FSMIA(‘filename’);
 ```
 - This initializes the FSMIA object MOVIE1 with properties described above.
 
-3. Set options by running in the command window:
+### Set FSMIA properties
 ```
 setoption(movie1);
 ```
@@ -75,12 +80,39 @@ setoption(movie1);
 	- Use observation to choose the expected size of the point spread function to set spotR.
 	- Get the pixel size from the camera specs.
 	- Set exclude to 0.
+	- Set include to 0.
 	- Connect distance must be determined by expected diffusion. Set to zero for no expected diffusion.
+	- Fitting method: 'slow'
 	- Isolation method: ‘fast’
 	- Downsampling rate: 1
-	- Include: 0
+	- Illumination correction: 'on'
+	- Background: Find the value of a region with no visibile particles and find the intensity value in ImageJ or using `imshow` and the data cursor. 1000 is normal.
+	- Wavelength: 647
+	- Numerical aperture: 1.49
 
-4. Run in the command window:
+### Perform Analysis
 ```
 analyzestack(movie1, movie1.filename);
+createTrajectories(movie1);
+coords = findGaussCoordinates(movie1);
+particleSize(movie1);
+[~, Displacements, ~] = findSteps(coords,1);
+[msd,D] = Dcoeff(Displacement,0.05);
 ```
+This series of steps will:
+- Analyze frames for particles
+- Connect particles on sequential frames
+- Extract the subpixel path coordinates
+- Analyze the particles for size
+- Get the displacement size between particles on sequential frames
+- Find the diffusion coefficient, D, and plot the mean squared displacement against time steps.
+
+### Visualize Results
+```
+ShowMarker(obj,1);
+```
+This visualizes all the particles that are detected on frame one. Pick a trajectory number on a particle (not 0), e.g. 10.
+```
+plotTrajectory(obj,10);
+```
+This will create an `avi` movie of trajectory 10 overlaid on the corresponding frames of the input video.
