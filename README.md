@@ -1,5 +1,5 @@
 # FSMIA
-Fluorescent Single Molecule Imaging Analysis  
+**Fluorescent Single Molecule Imaging Analysis**  
 Developed in The Lab for Nanobiotechnology by Dr. Siheng He and Megan Armstrong  
 Department of Biomedical Engineering  
 School of Engineering and Applied Science  
@@ -12,7 +12,7 @@ Input:
 An ND2 or TIFF image. The image is processed in grayscale.
 
 Required:  
-MATLAB and Bio-Formats library bfmatlab available [here](https://www.openmicroscopy.org/site/support/bio-formats5.1/users/matlab/).
+MATLAB and Bio-Formats library `bfmatlab` (available in this directory or [here](https://www.openmicroscopy.org/site/support/bio-formats5.1/users/matlab/)).
 
 Output:  
 An FSMIA object with properties **Filename**, **Option**, **Molecule**, **Frame**, **Result**, and **Intensity**.
@@ -88,7 +88,7 @@ setoption(movie1);
 	- Wavelength: 647
 	- Numerical aperture: 1.49
 
-### Perform Analysis
+### Perform analysis
 ```
 analyzestack(movie1, movie1.filename);
 createTrajectories(movie1);
@@ -105,12 +105,12 @@ This series of steps will:
 - Get the displacement size between particles on sequential frames
 - Find the diffusion coefficient, D, and plot the mean squared displacement against time steps.
 
-### Visualize Results
+### Visualize results
 ```
 ShowMarker(obj,1);
 ```
 This visualizes all the particles that are detected on frame one. Pick a trajectory number on a particle (not 0), e.g. 10.
 ```
-plotTrajectory(obj,10);
+plotTrajectory(obj,10,'on');
 ```
 This will create an `avi` movie of trajectory 10 overlaid on the corresponding frames of the input video.
