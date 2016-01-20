@@ -34,10 +34,10 @@ Definitions:
 	* Wavelength: Excitation wavelength.
 	* Numerical aperture: Numerical aperture of the objective.
 - **Molecule**: structure with 6 fields whose length is the number of molecules found in the image or image sequence. The fields are:
-	* centroid: the cetroid of the region that is found to be above the threshold level (for fast fitting).
+	* centroid: the centroid of the region that is found to be above the threshold level (for fast fitting). It is given in nm away from the center of the center pixel of the subregion defined by the spot radius.
 	* volume: the total intensity counts above background over the area that is found to be above the threshold level (for fast fitting).
 	* area: the area in nm^2 that is found to be above the threshold level (for fast fitting).
-	* maxInt: the maximum intensity in the region where the particle was detected minus the backgroudn (for fast fitting). Or, it's the amplitude of the Gaussian fit to the point spread function (for slow fitting).
+	* maxInt: the maximum intensity in counts in the region where the particle was detected minus the backgroudn (for fast fitting). Or, it's the amplitude of the Gaussian fit to the point spread function (for slow fitting).
 	* fit: the fit object that describes the point spread function of the particle (for slow fitting).
 	* gof: the goodness of fit of the fit object to the point spread function (for slow fitting).
 	* coordinate: the `[i,j]` coordinates of the pixel that the particle can be found on.
