@@ -24,7 +24,7 @@ Definitions:
 	* Threshold: level to make image binary.
 	* Spot radius: estimated radius of the point spread function of the particle in pixels. This sets the size of the subimage used for fitting.
 	* Pixel size_: size of a pixel in nanometers.
-	* * Include only region: `[min, max]`, where the included region is a centered square ranging from `i` and `j` coordinates `[min:max, min:max]`.
+	* Include only region: `[min, max]`, where the included region is a centered square ranging from `i` and `j` coordinates `[min:max, min:max]`.
 	* Exclude region: `[i1, j1; i2, j2]` region in image or image sequence that will be set to zero, i.e. not be included in the analysis.
 	* Connect distance: the maximum distance between two particles on different frames at which they will still be considered the same particle (in nanometers).
 	* Fitting: Centroid ('fast') or Gaussian ('slow') fitting.
