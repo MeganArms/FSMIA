@@ -6,7 +6,6 @@ School of Engineering and Applied Science
 Columbia University  
 
 ## What is the purpose of this directory?
-======================================
 The files here are designed to locate and parameterize fluorescent particles in an image or image sequence. 
 
 Input:  
@@ -52,7 +51,6 @@ Definitions:
 
 
 ## Quick Start Guide to FSMIA
-==========================
 
 ### Filter image to set threshold 
 ```
