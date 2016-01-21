@@ -1,4 +1,4 @@
-function volIntegrals = particleSize(obj,varargin)
+function S = particleSize(obj,varargin)
 
 % Analyze the input Molecule file for the frequency of fluorescence intensities 
 % Input data should be the Molecule file.
@@ -13,7 +13,7 @@ pixelSize = obj.Option.pixelSize;
 % Analyze molecules that appear on multiple frames and get their average
 % intensities
 MoleculeIndices = (1:length(Molecule))';
-MoleculesAnalyzed = zeros(length(Molecule),1); volIntegrals = zeros(length(longTraj),4);
+MoleculesAnalyzed = zeros(length(Molecule),1); S = zeros(length(longTraj),4);
 for i = 1:length(longTraj)
     Size = zeros(length(longTraj(i).trajectory),2);
     Width = zeros(length(longTraj(i).trajectory),1);
@@ -34,28 +34,28 @@ for i = 1:length(longTraj)
            MoleculesAnalyzed = MoleculesAnalyzed + MoleculeIndices.*(MoleculeIndices == longTraj(i).trajectory(j));
         end
     end
-    volIntegrals(i,:) = [max(Size(:,1)), max(Size(:,2)), length(longTraj(i).trajectory), mean(Width)];
+    S(i,:) = [max(Size(:,1)), max(Size(:,2)), length(longTraj(i).trajectory), mean(Width)];
 end
 
 % Analyze molecules that appear on only one frame
 
 MoleculesRemaining = MoleculeIndices(MoleculeIndices ~= MoleculesAnalyzed);
-starti = length(volIntegrals)+1;
-volIntegrals = [volIntegrals; zeros(length(MoleculesRemaining),4)];
-for i = starti:length(volIntegrals)
+starti = length(S)+1;
+S = [S; zeros(length(MoleculesRemaining),4)];
+for i = starti:length(S)
     mIndex = MoleculesRemaining(i-starti+1);
     if isfield(Molecule,'fit')
         [volInt, maxInt] = fitVolume(mIndex, Molecule);
-        volIntegrals(i,:) = [volInt, maxInt, 1, Molecule(mIndex).fit.sigma];
+        S(i,:) = [volInt, maxInt, 1, Molecule(mIndex).fit.sigma];
     elseif isfield(Molecule,'area')
         volInt = Molecule(mIndex).volume;
         maxInt = Molecule(mIndex).maxInt;
-        volIntegrals(i,:) = [volInt, maxInt, 1, sqrt(Molecule(mIndex).area/pi)];
+        S(i,:) = [volInt, maxInt, 1, sqrt(Molecule(mIndex).area/pi)];
     end
 end
 
 % Scale the intensities to counts from counts*um^2
-[obj.Intensity, ~] = VItransform(volIntegrals, 190, 13);
+[obj.Intensity, ~] = VItransform(S, 190, 13);
 
     function [scaled, newVI] = VItransform(volIntegral, musigma, sdsigma)
         

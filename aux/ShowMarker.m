@@ -5,10 +5,22 @@ function ShowMarker(obj,index)
 %   IMAGE - image file name
 %   INDEX - the index of the image
 I = obj.filename;
-Result = obj.Result;
 Option = obj.Option;
 Molecule = obj.Molecule;
 Frame = obj.Frame;
+
+Result = struct;
+if isfield(Molecule,'connectedResult')
+    for i = 1:length(Molecule)
+        if ~isempty(Molecule(i).connectedResult)
+            Result(i).trajectory = Molecule(i).connectedResult;
+        else
+            continue
+        end
+    end
+else
+    Result = obj.Result;
+end
 
 img = imread(I,index);
 mol_ind = Frame(index).MoleculeIndex; % Vector of the molecule indices in this frame

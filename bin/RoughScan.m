@@ -20,10 +20,9 @@ if strcmp(Option.illumination,'on')
     img14 = img13/max(max(img13));
     % Mulitply pixels by the sum of their 8-connected neighbors to increase
     % intensities of particles
-    img_2 = colfilt(img14,[3 3],'sliding',@colsp);
-    threshold = mean(img_2(:)) + 3*std(double(img_2(:)));
+    img_2 = imadjust(colfilt(img14,[3 3],'sliding',@colsp));
 else
-    img_2 = img;
+    img_2 = imadjust(img);
 end
 if Option.exclude
     x1 = Option.exclude(1,1);
