@@ -16,6 +16,9 @@ allTraj = [];
 initialvars = who;
 
 for i = 4:numFiles
+    if dirListing(i).isdir
+        break
+    end
     clear obj
     % Initialize object
     obj = FSMIA([folderIn, '/', dirListing(i).name]);
