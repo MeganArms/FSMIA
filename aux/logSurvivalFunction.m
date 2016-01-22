@@ -1,4 +1,4 @@
-function [T, SF] = logSurvivalFunction(obj,exptime,count)
+function [T, SF] = logSurvivalFunction(numFrames,exptime,count)
 
 % LOGSURVIVIALFUNCTION finds the survival function (complement of the
 % cumulative distribution) for the residence time information for a log-log
@@ -13,8 +13,8 @@ function [T, SF] = logSurvivalFunction(obj,exptime,count)
 %   - SF - survival function. SF(t) = P(t >= T(t)) with correction for
 %   finite video length.
 
-Frame = obj.Frame;
-numFrames = length(Frame);
+% Frame = obj.Frame;
+% numFrames = length(Frame);
 maxT = exptime*(numFrames);
 deltaT = exptime;
 

@@ -22,7 +22,7 @@ T = deltaT:deltaT:maxT;
 c = 1./(heaviside(maxT-[0,T]).*(1-([0,T]/maxT)));
 c = c(1:end-1);
 if length(c) ~= length(count)
-    n = padarray(count,[abs(length(c) - length(count)), 0],0,'post')';
+    n = padarray(count,[length(c) - length(count), 0],0,'post')';
     SF = 1-cumsum(n.*c/sum(n.*c));
 else
     SF = 1-cumsum(count.*c/sum(count.*c));

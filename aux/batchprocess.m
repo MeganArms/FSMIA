@@ -1,4 +1,6 @@
 function batchprocess
+% load('/Users/MeganArmstrong 1/Documents/Hess Lab/BSA Project/Corina Data/20140514/80C/out/2014-05-14_BSA_flowcell_pluronic_80C_exp200ms_l10_EM200.mat');
+% clearvars('-except','allDisplacements','allCounts','allLogCounts','allCoordinates','allSizes','allTraj');
 clear
 folderIn = uigetdir('/Users/MeganArmstrong 1/Documents/Hess Lab/BSA Project/Corina Data');
 folderOut = [folderIn, '/out'];
@@ -6,7 +8,7 @@ dirListing = dir(folderIn);
 numFiles = length(dirListing);
 exptime = 0.2; % seconds
 
-allDisplacements = [];
+allDisplacements = cell(298,1);
 allCounts = [];
 allLogCounts = [];
 allCoordinates = [];
@@ -65,6 +67,8 @@ for i = 4:numFiles
     
     % Begin stack analysis
     analyzestack(obj, obj.filename);
+    % Save output
+    save([folderOut,'/',dirListing(i).name(1:end-3),'mat']);
     
     % Perform analysis
     createTrajectories(obj);
@@ -74,10 +78,10 @@ for i = 4:numFiles
     [~,Displacement,~] = findSteps(coords,1);
     [msd,D] = Dcoeff(Displacement,exptime);
     logcount = logResidenceTimeStat(coords,'ExposureTime',exptime);
-    [logT,logSF] = logSurvivalFunction(obj,exptime,logcount);
+    [logT,logSF] = logSurvivalFunction(298,exptime,logcount);
     count = ResidenceTimeStat(coords,'ExposureTime',exptime);
     [T,SF] = survivalFunction(obj,exptime,count);
-    [dSF, ~] = diffSurvival(Displacement,exptime,1,1,100);
+    dSF = diffSurvival(Displacement,exptime,1,1,100);
     
     % Save output
     save([folderOut,'/',dirListing(i).name(1:end-3),'mat']);
@@ -86,7 +90,9 @@ for i = 4:numFiles
     allTraj = [allTraj, longTraj];
     allCoordinates = [allCoordinates; coords];
     allSizes = [allSizes; sizes];
-    allDisplacements = [allDisplacements; Displacement];
+    for k = 1:length(Displacement)
+        allDisplacements{k} = [allDisplacements{k}; Displacement{k}];
+    end
     allCounts = [allCounts, count];
     allLogCounts = [allLogCounts, logcount];
     clearvars('-except',initialvars{:},'i','initialvars')

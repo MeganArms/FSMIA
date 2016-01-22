@@ -3,7 +3,7 @@ function longTraj = connectShortTraj(obj,exp_time)
 Result = obj.Result;
 Molecule = obj.Molecule;
 
-exp_time = exp_time/1000; % Convert ms into seconds
+% exp_time = exp_time/1000; % Convert ms into seconds
 numTrajectories = length(Result);
 
 % Get the coordinates of the fist molecule in each trajectory

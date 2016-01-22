@@ -1,4 +1,4 @@
- function [SF, SFplot] = diffSurvival(displ, lagtime, varargin)
+ function SF = diffSurvival(displ, lagtime, varargin)
 
 % DIFFSURVIVAL finds the cumulated square displacement distribution,
 % or survival function, as described in Kastantin & Schwartz 2012.
@@ -18,7 +18,7 @@
 %   output to this file for analysis.
 %   SFPLOT - Reliability function of squared displacements with a sample of
 %   points for faster plotting and fitting.
-
+displ = displ(~cellfun(@isempty,displ));
 numFrames = length(displ);
 T = numFrames*lagtime;
 if ~isempty(varargin)
