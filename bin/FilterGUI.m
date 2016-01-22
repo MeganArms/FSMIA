@@ -206,13 +206,13 @@ if get(handles.toggle_illumination,'Value') == 1
     img14 = img13/max(max(img13));
     % Mulitply pixels by the sum of their 8-connected neighbors to increase
     % intensities of particles
-    outImage = colfilt(img14,[3 3],'sliding',@colsp);
+    outImage = imadjust(colfilt(img14,[3 3],'sliding',@colsp));
 else
-    outImage = img;
+    outImage = imadjust(img);
 end
 % Get recommended threshold - 3 sigma from the mean
 mu = mean(outImage(:));
 sigma = std(double(outImage(:)));
-fprintf('Recommended threshold: %f\n',mu+3*sigma)
+fprintf('Recommended threshold: %f\n',mu+3.5*sigma)
 imwrite(uint16(outImage),get(handles.edit_output,'String'));
 close(handles.figure1);

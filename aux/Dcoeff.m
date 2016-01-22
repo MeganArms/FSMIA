@@ -1,5 +1,6 @@
 function [msd, D] = Dcoeff(Displacements, exptime)
 
+Displacements = Displacements(~cellfun(@isempty,Displacements));
 msd = zeros(length(Displacements),1); sem = msd;
 delta_t = (1:length(Displacements))*exptime;
 

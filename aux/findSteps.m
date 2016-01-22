@@ -33,7 +33,7 @@ for i = 1:length(data)
     % Then convert this to a matrix so that each number at i, j is the
     % distance between points i and j
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % This block should be updated with the desired flow of analysis, i.e.
+    % This block can be updated with the desired flow of analysis, i.e.
     % place the actual analysis in the if-blocks that give the desired
     % results
 %     Path{i} = abs(diff(data{i},1,1))*160/1000;
