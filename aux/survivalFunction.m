@@ -1,4 +1,4 @@
-function [T, SF] = survivalFunction(obj,exptime,count)
+function [T, SF] = survivalFunction(numFrames,exptime,count)
 
 % SURVIVIALFUNCTION finds the survival function (complement of the
 % cumulative distribution) for the residence time information.
@@ -12,8 +12,8 @@ function [T, SF] = survivalFunction(obj,exptime,count)
 %   - SF - survival function. SF(t) = P(t >= T(t)) with correction for
 %   finite video length.
 
-Frame = obj.Frame;
-numFrames = length(Frame);
+% Frame = obj.Frame;
+% numFrames = length(Frame);
 maxT = exptime*(numFrames-1);
 deltaT = exptime;
 count = count(1:end-1)';
