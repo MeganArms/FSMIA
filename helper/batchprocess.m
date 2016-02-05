@@ -74,13 +74,13 @@ for i = 4:numFiles
     createTrajectories(obj);
     longTraj = connectShortTraj(obj,exptime);
     coords = getCoordinates(obj,'yes');
-    sizes = particleSize(obj);
+    % sizes = particleSize(obj);
     [~,Displacement,~] = findSteps(coords,1);
     [msd,D] = Dcoeff(Displacement,exptime);
     logcount = logResidenceTimeStat(coords,'ExposureTime',exptime);
     [logT,logSF] = logSurvivalFunction(298,exptime,logcount);
     count = ResidenceTimeStat(coords,'ExposureTime',exptime);
-    [T,SF] = survivalFunction(obj,exptime,count);
+    [T,SF] = survivalFunction(298,exptime,count);
     dSF = diffSurvival(Displacement,exptime,1,1,100);
     
     % Save output
@@ -89,7 +89,7 @@ for i = 4:numFiles
     % Collect results
     allTraj = [allTraj, longTraj];
     allCoordinates = [allCoordinates; coords];
-    allSizes = [allSizes; sizes];
+    %allSizes = [allSizes; sizes];
     for k = 1:length(Displacement)
         allDisplacements{k} = [allDisplacements{k}; Displacement{k}];
     end
