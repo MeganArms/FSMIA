@@ -56,6 +56,7 @@ Definitions:
 ## Quick Start Guide to FSMIA
 
 ### Filter image to set threshold 
+- Run in the command window:
 ```
 FilterGUI
 ```
@@ -67,24 +68,26 @@ FilterGUI
 - The recommended threshold will be output to the command window.
 
 ### Initialize FSMIA object
+- Run in the command window:
 ```
 movie1 = FSMIA(‘filename’);
 ```
 - This initializes the FSMIA object MOVIE1 with properties described above.
 
 ### Set FSMIA properties
+- Run in the command window:
 ```
 setoption(movie1);
 ```
 - The properties of movie1.Option are described above, but use these below as a quick start:
 	- Use the threshold recommended by FilterGUI.
-	- Use observation to choose the expected size of the point spread function to set spotR.
+	- Use observation to choose the expected size of the point spread function to set spotR. Count the number of pixels that the particles span.
 	- Get the pixel size from the camera specs.
 	- Set exclude to 0.
 	- Set include to 0.
-	- Connect distance must be determined by expected diffusion. Set to zero for no expected diffusion.
-	- Fitting method: 'slow'
-	- Isolation method: ‘fast’
+	- Connect distance must be determined by expected diffusion. Set to zero for no expected diffusion. Set this to the maximum number of pixels a particle moves between frames times the pixel size.
+	- Fitting method: 'fast'
+	- Isolation method: 'fast'
 	- Downsampling rate: 1
 	- Illumination correction: 'on'
 	- Background: Find the value of a region with no visibile particles and find the intensity value in ImageJ or using `imshow` and the data cursor. 1000 is normal.
@@ -92,10 +95,11 @@ setoption(movie1);
 	- Numerical aperture: 1.49
 
 ### Perform analysis
+- Run in the command window:
 ```
 analyzestack(movie1, movie1.filename);
 createTrajectories(movie1);
-coords = findGaussCoordinates(movie1);
+coords = getCoordinates(movie1);
 particleSize(movie1);
 [~, Displacements, ~] = findSteps(coords,1);
 [msd,D] = Dcoeff(Displacement,0.05);
@@ -109,11 +113,14 @@ This series of steps will:
 - Find the diffusion coefficient, D, and plot the mean squared displacement against time steps.
 
 ### Visualize results
+- Run in the command window:
 ```
-ShowMarker(obj,1);
+ShowMarker(movie1,1);
 ```
-This visualizes all the particles that are detected on frame one. Pick a trajectory number on a particle (not 0), e.g. 10.
+This visualizes all the particles that are detected on frame one. The numbers are the trajectory numbers associated with the particle, which are zero if the particle stays for fewer than one frame. Pick a trajectory number on a particle (not 0), e.g. 10.
+  
+- Run in the command window
 ```
-plotTrajectory(obj,10,'on');
+plotTrajectory(movie1,10,'on');
 ```
 This will create an `avi` movie of trajectory 10 overlaid on the corresponding frames of the input video.
