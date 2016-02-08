@@ -185,7 +185,7 @@ filename = get(handles.edit_input,'String');
 if strcmp(filename(end-3:end),'.nd2')
     data = bfopen(get(handles.edit_input,'String'));
     ind = str2double(get(handles.edit_frame,'String'));
-    img = double(data{1}{ind,1});
+    img = data{1}{ind,1};
 elseif strcmp(filename(end-3:end),'.tif')
     img = imread(get(handles.edit_input,'String'),'Index',...
     str2double(get(handles.edit_frame,'String')));
