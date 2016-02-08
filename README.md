@@ -72,6 +72,7 @@ FilterGUI
 ```
 movie1 = FSMIA(‘filename’);
 ```
+- 'filename' is the full path to the image **stack** to be analyzed.
 - This initializes the FSMIA object MOVIE1 with properties described above.
 
 ### Set FSMIA properties
