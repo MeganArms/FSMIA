@@ -3,7 +3,7 @@ function [molPixelIdx,BW2] = RoughScan(obj,RawImage)
 Option = obj.Option;
 threshold = Option.threshold;
 R = Option.spotR;
-img = double(RawImage);
+img = convert2double(RawImage);
 [M,N] = size(img);
 if strcmp(Option.illumination,'on')
     % High pass filtering to remove uneven background

@@ -103,7 +103,7 @@ createTrajectories(movie1);
 coords = getCoordinates(movie1);
 particleSize(movie1);
 [~, Displacements, ~] = findSteps(coords,1);
-[msd,D] = Dcoeff(Displacement,0.05);
+[msd,D] = Dcoeff(Displacements,0.05);
 ```
 This series of steps will:
 - Analyze frames for particles
