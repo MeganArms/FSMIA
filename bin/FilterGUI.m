@@ -213,6 +213,6 @@ end
 % Get recommended threshold - 3 sigma from the mean
 mu = mean(outImage(:));
 sigma = std(double(outImage(:)));
-fprintf('Recommended threshold: %f\n',mu+3.5*sigma)
+fprintf('Recommended threshold: %f\n',mu+2*sigma)
 imwrite(uint16(outImage),get(handles.edit_output,'String'));
 close(handles.figure1);
