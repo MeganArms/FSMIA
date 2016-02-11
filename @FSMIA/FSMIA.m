@@ -38,7 +38,7 @@ classdef FSMIA < handle
            if isnan(exclude) || isempty(exclude)
                opt.exclude = false;
            else
-               opt.exlcude = exclude;
+               opt.exclude = exclude;
            end
            include = str2double(answer{5});
            if isnan(include) || isempty(include)

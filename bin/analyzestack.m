@@ -10,7 +10,7 @@ end
     function analyzenikonstack(obj,ImageFile)
         data = bfopen(ImageFile);
         [nFrame,~] = size(data{1});
-        fprintf('Starting analyze %d frames\n',nFrame);
+        fprintf('Beginning analysis of %d frames, sampling every %d frames\n',nFrame,dsRate);
         tic;
         for k = 1:nFrame
             NumMolecule = length(obj.Molecule);
@@ -37,6 +37,7 @@ end
         for k = 1:nFrame-1
             connectFrame(obj,k,k+1);
         end
+	disp('Molecules connected!');
     end
 
     function analyzetiffstack(obj,ImageFile)
