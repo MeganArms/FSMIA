@@ -15,7 +15,7 @@ function varargout = FilterGUI(varargin)
 %      unrecognized property name or invalid value makes property application
 %      stop.  All inputs are passed to FilterGUI_OpeningFcn via varargin.
 %
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      *See GUI Options on GUIDE''s Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
@@ -150,7 +150,7 @@ close(handles.figure1)
 
 % --- Executes on button press in pushbutton_inFile.
 function pushbutton_inFile_Callback(hObject, eventdata, handles)
-[FileName,PathName] = uigetfile({'*.nd2';'*.tif';'*.*'},'Select the image to filter');
+[FileName,PathName] = uigetfile({'*.tif';'*.nd2';'*.*'},'Select the image to filter');
 % If no sif file selected, return
 if ~FileName
     return
@@ -211,8 +211,8 @@ else
     outImage = imadjust(img);
 end
 % Get recommended threshold - 3 sigma from the mean
-mu = mean(outImage(:));
-sigma = std(double(outImage(:)));
+mu = mean(convert2double(outImage(:)));
+sigma = std(convert2double(outImage(:)));
 fprintf('Recommended threshold: %f\n',mu+2*sigma)
 imwrite(uint16(outImage),get(handles.edit_output,'String'));
 close(handles.figure1);
