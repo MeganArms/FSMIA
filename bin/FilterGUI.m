@@ -185,7 +185,7 @@ filename = get(handles.edit_input,'String');
 if strcmp(filename(end-3:end),'.nd2')
     data = bfopen(get(handles.edit_input,'String'));
     ind = str2double(get(handles.edit_frame,'String'));
-    img = double(data{1}{ind,1});
+    img = convert2double(data{1}{ind,1});
 elseif strcmp(filename(end-3:end),'.tif')
     img = imread(get(handles.edit_input,'String'),'Index',...
     str2double(get(handles.edit_frame,'String')));
@@ -213,6 +213,6 @@ end
 % Get recommended threshold - 3 sigma from the mean
 mu = mean(outImage(:));
 sigma = std(double(outImage(:)));
-fprintf('Recommended threshold: %f\n',mu+3.5*sigma)
+fprintf('Recommended threshold: %f\n',mu+2*sigma)
 imwrite(uint16(outImage),get(handles.edit_output,'String'));
 close(handles.figure1);
