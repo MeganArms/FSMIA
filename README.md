@@ -55,6 +55,10 @@ Definitions:
 
 ## Quick Start Guide to FSMIA
 
+### Add the FSMIA folder to the path
+- Right click on the FMSIA folder in the folder browser
+- Select "Add to path">"Selected folders and subfolders"
+
 ### Filter image to set threshold 
 - Run in the command window:
 ```

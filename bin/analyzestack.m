@@ -10,6 +10,8 @@ end
     function analyzenikonstack(obj,ImageFile)
         data = bfopen(ImageFile);
         [nFrame,~] = size(data{1});
+        dsRate = obj.Option.ds;
+        frames2analyze = 1:dsRate:nFrame;
         fprintf('Beginning analysis of %d frames, sampling every %d frames\n',nFrame,dsRate);
         tic;
         for k = 1:nFrame

@@ -13,7 +13,12 @@ for i = 1:size(path,1)
     % Get frame
     mIndex = path(i);
     fIndex = Molecule(mIndex).frame;
-    img = imread(obj.filename,fIndex);
+    if strcmp(ext, '.tiff') || strcmp(ext,'.tif')
+        img = imread(obj.filename,fIndex);
+    elseif strcmp(ext,'.nd2')
+        data = bfopen(obj.filename);
+        img = data{1}{fIndex,1};
+    end
     
     % Pre-process image
     [M,~] = size(img);
