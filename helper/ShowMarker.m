@@ -1,4 +1,4 @@
-function ShowMarker(obj,index)
+  function ShowMarker(obj,index)
 % Show where the identified single molecules are and number them according
 % to which trajectory that they're a part of
 % Input
@@ -22,7 +22,12 @@ else
     Result = obj.Result;
 end
 
-img = imread(I,index);
+if strcmp(ext, '.tiff') || strcmp(ext,'.tif')
+    img = imread(I,index);
+elseif strcmp(ext,'.nd2')
+    data = bfopen(I);
+    img = data{1}{index,1};
+end
 mol_ind = Frame(index).MoleculeIndex; % Vector of the molecule indices in this frame
 N = length(mol_ind);
 pts = zeros(N,2);
