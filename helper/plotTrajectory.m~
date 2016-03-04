@@ -13,7 +13,7 @@ for i = 1:size(path,1)
     % Get frame
     mIndex = path(i);
     fIndex = Molecule(mIndex).frame;
-    [~,~,ext] = fileparts(obj.filename);
+    [~,~,ext] = fileparts(ImageFile);
     if strcmp(ext, '.tiff') || strcmp(ext,'.tif')
         img = imread(obj.filename,fIndex);
     elseif strcmp(ext,'.nd2')
