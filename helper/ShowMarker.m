@@ -72,19 +72,9 @@ if strcmp(Option.illumination,'on')
 else
     img_1 = img;
 end
-% img2 = img_1*(2^16-1);
-% RGB = repmat(imadjust(uint16(img2)),[1,1,3]);
-% for i = 1:N
-%     RGB(pts(i,1)-2:pts(i,1)+2,pts(i,2),1) = 0;
-%     RGB(pts(i,1)-2:pts(i,1)+2,pts(i,2),2) = 65535;
-%     RGB(pts(i,1)-2:pts(i,1)+2,pts(i,2),3) = 0;
-%     RGB(pts(i,1),pts(i,2)-2:pts(i,2)+2,1) = 0;
-%     RGB(pts(i,1),pts(i,2)-2:pts(i,2)+2,2) = 65535;
-%     RGB(pts(i,1),pts(i,2)-2:pts(i,2)+2,3) = 0;
-% end
-% figure; imshow(RGB);
+
 figure,imshow(imadjust(img_1))
-hold on, plot(pts(:,2),pts(:,1),'c*'),hold off
+hold on, plot(pts(:,2),pts(:,1),'co'),hold off
 for i = 1:length(pts)
     text((double(pts(i,2))+4),double(pts(i,1)),sprintf('%d',currentTraj(i)),'Color','c');
 end
