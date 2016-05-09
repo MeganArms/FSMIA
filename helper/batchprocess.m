@@ -2,7 +2,7 @@ function batchprocess
 % load('/Users/MeganArmstrong 1/Documents/Hess Lab/BSA Project/Corina Data/20140514/80C/out/2014-05-14_BSA_flowcell_pluronic_80C_exp200ms_l10_EM200.mat');
 % clearvars('-except','allDisplacements','allCounts','allLogCounts','allCoordinates','allSizes','allTraj');
 clear
-folderIn = uigetdir('/Users/MeganArmstrong 1/Documents/Hess Lab/BSA Project/Corina Data');
+folderIn = uigetdir('/Users/MeganArmstrong 1/Documents/Hess Lab/Langmuir Communication/BSA Project/Corina Movies');
 folderOut = [folderIn, '/out'];
 dirListing = dir(folderIn);
 numFiles = length(dirListing);
@@ -35,7 +35,8 @@ for i = 4:numFiles
         Img = fft2(img);
         Img1 = fftshift(Img);
         Img2 = Img1;
-        Img2(mid-3:mid+3,mid-3:mid+3) = min(min(Img1));
+        Img2(mid-9:mid+9,mid) = min(min(Img1));
+        Img2(mid,mid-13:mid+13) = min(min(Img1));
         Img2(257,257) = Img1(257,257);
         img1 = ifft2(ifftshift(Img2));
         img12 = abs(img1);
@@ -43,12 +44,14 @@ for i = 4:numFiles
         img14 = img13/max(max(img13));
         % Mulitply pixels by the sum of their 8-connected neighbors to increase
         % intensities of particles
-        outImage = imadjust(colfilt(img14,[3 3],'sliding',@colsp));
+        % outImage = imadjust(colfilt(img14,[3 3],'sliding',@colsp));
+        outImage = imadjust(img14);
     else
         outImage = imadjust(img);
     end
     imwrite(uint16(outImage),[folderOut,'/',dirListing(i).name]);
-    figure(1),imshow(outImage), th = input('Set threshold: ');
+    figure(1),imshow(outImage), th = input('Set threshold: '); 
+    bg = input('Set background: ');
     close(figure(1))
     
     % Set options
@@ -61,7 +64,7 @@ for i = 4:numFiles
     obj.Option.ds = 1;
     obj.Option.fitting = 'fast';
     obj.Option.isolation = 'fast';
-    obj.Option.bg = 1000;
+    obj.Option.bg = bg;
     obj.Option.wavelength = 647;
     obj.Option.na = 1.49;
     
@@ -74,7 +77,7 @@ for i = 4:numFiles
     createTrajectories(obj);
     longTraj = connectShortTraj(obj,exptime);
     coords = getCoordinates(obj,'yes');
-    % sizes = particleSize(obj);
+    sizes = particleSize(obj);
     [~,Displacement,~] = findSteps(coords,1);
     [msd,D] = Dcoeff(Displacement,exptime);
     logcount = logResidenceTimeStat(coords,'ExposureTime',exptime);
@@ -89,7 +92,7 @@ for i = 4:numFiles
     % Collect results
     allTraj = [allTraj, longTraj];
     allCoordinates = [allCoordinates; coords];
-    %allSizes = [allSizes; sizes];
+    allSizes = [allSizes; sizes];
     for k = 1:length(Displacement)
         allDisplacements{k} = [allDisplacements{k}; Displacement{k}];
     end

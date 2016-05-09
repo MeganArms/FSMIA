@@ -3,6 +3,7 @@ function [molPixelIdx,BW2] = RoughScan(obj,RawImage)
 Option = obj.Option;
 threshold = Option.threshold;
 R = Option.spotR;
+background = Option.bg;
 img = convert2double(RawImage);
 [M,N] = size(img);
 if strcmp(Option.illumination,'on')
@@ -20,6 +21,7 @@ if strcmp(Option.illumination,'on')
     img14 = img13/max(max(img13));
     % Mulitply pixels by the sum of their 8-connected neighbors to increase
     % intensities of particles
+    % img_2 = imadjust(img14);
     img_2 = imadjust(colfilt(img14,[3 3],'sliding',@colsp));
 else
     img_2 = imadjust(img);
@@ -36,7 +38,7 @@ if Option.include
     maxval = Option.include(1,2)-1;
     I = img_2(minval:maxval, minval:maxval);
     topad = (M - (maxval-minval+1))/2;
-    img_2 = padarray(I,[topad topad],1000,'both');
+    img_2 = padarray(I,[topad topad],background,'both');
 end
 
 BW = img_2 > threshold;
