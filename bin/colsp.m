@@ -22,6 +22,6 @@ bp = zeros(1,n);
 lutcurrent = reshape(lut,[9,1]);
 lutmatrix = repmat(lutcurrent,1,n);
 outs = sum(subimg.*lutmatrix,1);
-bp(1,:) = subimg(5,:).*outs;
+bp(1,:) = subimg(5,:).*outs; % Five is the middle pixel in column
 
 end

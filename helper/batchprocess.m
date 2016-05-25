@@ -37,15 +37,15 @@ for i = 4:numFiles
         Img2 = Img1;
         Img2(mid-9:mid+9,mid) = min(min(Img1));
         Img2(mid,mid-13:mid+13) = min(min(Img1));
-        Img2(257,257) = Img1(257,257);
+        Img2(257,257) = Img1(257,257);%fix
         img1 = ifft2(ifftshift(Img2));
         img12 = abs(img1);
         img13 = img12-min(min(img12));
         img14 = img13/max(max(img13));
         % Mulitply pixels by the sum of their 8-connected neighbors to increase
         % intensities of particles
-        % outImage = imadjust(colfilt(img14,[3 3],'sliding',@colsp));
-        outImage = imadjust(img14);
+        outImage = imadjust(colfilt(img14,[3 3],'sliding',@colsp));
+        % outImage = imadjust(img14);
     else
         outImage = imadjust(img);
     end
