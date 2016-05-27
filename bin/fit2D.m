@@ -25,5 +25,10 @@ sigma_0 = lambda/2/NA;
 opts.StartPoint = [A_0 sigma_0 x_0 y_0 z_0];
 opts.Lower = [0 0.1*R*ps -0.5*R*ps -0.5*R*ps z_0-200];
 opts.Upper = [A_0+200 0.6*R*ps 0.5*R*ps 0.5*R*ps z_0+200];
+for i=1:5
+    if opts.Lower(i)>opts.Upper(i)
+        f=1;
+    end
+end
 
 [f,gof] = fit([x,y],z,ft,opts);

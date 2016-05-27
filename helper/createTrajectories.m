@@ -17,7 +17,7 @@ for i = 1:N2
     % Judge if the molecule is the start of trajectory
     if ~isempty(Molecule(i).To) && isempty(Molecule(i).From)
         temp = zeros(1,N_frame);
-        temp(1) = i;
+        temp(1) = i; %path
         current = i;
         j = 2;
         while ~isempty(Molecule(current).To)

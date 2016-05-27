@@ -1,0 +1,12 @@
+Max=max(sizes(:,1));
+binedge = linspace(0,Max,100);
+counts=zeros(length(sizes),1);
+
+for i=1:100
+    if le(sizes(i,:),binedge(i)) 
+        if ge(sizes(:,i),binedge(i-1))
+            counts(i)= counts(i)+1;
+        end
+    end
+end
+        

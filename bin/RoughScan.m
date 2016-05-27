@@ -57,7 +57,7 @@ testmat8 = zeros(M+2,N+2); testmat8(2:end-1,1:end-2) = BW;
 tallymat = BWpad + testmat1 + testmat2 + testmat3 + testmat4 + testmat5 ...                                                                                          
     + testmat6 + testmat7 + testmat8;
 
-BW2 = BW.*(tallymat(2:end-1,2:end-1) > 1);
+BW2 = BW.*(tallymat(2:end-1,2:end-1) > 1); % if >1 -> there's a particle
 CC = bwconncomp(BW2);
 
 molPixelIdx = cell(1);
@@ -82,8 +82,8 @@ for k = 1:length(CC.PixelIdxList)
             end
         end    
     else
-        [i,j] = getcentroid(CC.PixelIdxList{k});
-        if ge(i,R+1) && ge(M-R,i) && ge(j,R+1) && ge(N-R,j)
+        [i,j] = getcentroid(CC.PixelIdxList{k}); %center of image
+        if ge(i,R+1) && ge(M-R,i) && ge(j,R+1) && ge(N-R,j) %not in a corner/edge
             molPixelIdx{l} = [i,j];
             l = l+1;
         end
