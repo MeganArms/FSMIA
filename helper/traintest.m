@@ -11,6 +11,9 @@ d = zeros(nstrap,4); db = zeros(nstrap,4); steps = 2:2:300;
 % bootstrap the training data to determine the accuracy of the fit to the
 % training data.
 for i = 1:nstrap
+    count = ResidenceTimeStat(allCoordinates,'ExposureTime',0.2);
+    [t,sf,sem] = survivalFunction(269,0.2,count);
+    
     % Separate train and test trajectory sets
     traincoordsidx = randsample(length(allCoordinates),ntrain);
     testcoordsidx = idcs(~ismember(idcs,traincoordsidx));
