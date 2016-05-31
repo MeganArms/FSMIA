@@ -13,19 +13,21 @@ pixelSize = obj.Option.pixelSize;
 % Analyze molecules that appear on multiple frames and get their average
 % intensities
 MoleculeIndices = (1:length(Molecule))';
-MoleculesAnalyzed = zeros(length(Molecule),1); S = zeros(length(longTraj),4);
+MoleculesAnalyzed = zeros(length(Molecule),1); 
+S = zeros(2*length(longTraj),4);
+L = length(longTraj);
 for i = 1:length(longTraj)
     Size = zeros(length(longTraj(i).trajectory),2);
     Width = zeros(length(longTraj(i).trajectory),1);
     for j = 1:length(longTraj(i).trajectory)
         if ~isnan(longTraj(i).trajectory(j))
            mIndex = longTraj(i).trajectory(j);
-           if isfield(Molecule,'fit')
+           if isfield(Molecule,'fit') %gaussian
                Width(j) = Molecule(mIndex).fit.sigma;
                [Size(j,1), Size(j,2)] = fitVolume(mIndex,Molecule);
                obj.Molecule(mIndex).volume = Size(j,1);
                obj.Molecule(mIndex).maxInt = Size(j,2);
-           elseif isfield(Molecule,'area')
+           elseif isfield(Molecule,'area') %centroid -> fast
                a = Molecule(mIndex).area;
                Width(j) = sqrt(a/pi);
                Size(j,1) = Molecule(mIndex).volume;
@@ -34,25 +36,40 @@ for i = 1:length(longTraj)
            MoleculesAnalyzed = MoleculesAnalyzed + MoleculeIndices.*(MoleculeIndices == longTraj(i).trajectory(j));
         end
     end
-    S(i,:) = [max(Size(:,1)), max(Size(:,2)), length(longTraj(i).trajectory), mean(Width)];
+    if ge(length(longTraj(i).trajectory),4)
+        S(i,:) = [max(Size(:,1)), max(Size(:,2)), length(longTraj(i).trajectory), mean(Width)];
+    elseif length(longTraj(i).trajectory)==3
+        S(i+L,:) = [max(Size(:,1)), max(Size(:,2)), length(longTraj(i).trajectory), mean(Width)];
+    end
+
 end
 
-% Analyze molecules that appear on only one frame
-
-MoleculesRemaining = MoleculeIndices(MoleculeIndices ~= MoleculesAnalyzed);
-starti = length(S)+1;
-S = [S; zeros(length(MoleculesRemaining),4)];
-for i = starti:length(S)
-    mIndex = MoleculesRemaining(i-starti+1);
-    if isfield(Molecule,'fit')
-        [volInt, maxInt] = fitVolume(mIndex, Molecule);
-        S(i,:) = [volInt, maxInt, 1, Molecule(mIndex).fit.sigma];
-    elseif isfield(Molecule,'area')
-        volInt = Molecule(mIndex).volume;
-        maxInt = Molecule(mIndex).maxInt;
-        S(i,:) = [volInt, maxInt, 1, sqrt(Molecule(mIndex).area/pi)];
+%Remove all blank lines in the matrix (corresponding to molecules that
+%appear in less than 3 frames)
+for i=size(S,1):-1:1
+    if all(S(i,:))==0
+        S(i,:)=[];
     end
 end
+
+% % Analyze molecules that appear on only one frame
+% 
+% MoleculesRemaining = MoleculeIndices(MoleculeIndices ~= MoleculesAnalyzed);
+% starti = length(S)+1;
+% S = [S; zeros(length(MoleculesRemaining),4)];
+% for i = starti:length(S)
+%     mIndex = MoleculesRemaining(i-starti+1);
+%     if isfield(Molecule,'fit')
+%         [volInt, maxInt] = fitVolume(mIndex, Molecule);
+%         S(i,:) = [volInt, maxInt, 1, Molecule(mIndex).fit.sigma];
+%     elseif isfield(Molecule,'area')
+%         volInt = Molecule(mIndex).volume;
+%         maxInt = Molecule(mIndex).maxInt;
+%         S(i,:) = [volInt, maxInt, 1, sqrt(Molecule(mIndex).area/pi)];
+%     end
+% end
+
+% Analyze molecules that appear on at least 3 frames
 
 % Scale the intensities to counts from counts*um^2
 [obj.Intensity, ~] = VItransform(S, 190, 13);

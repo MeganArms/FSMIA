@@ -4,7 +4,9 @@ function FineScan(obj,RawImage)
 
 Option = obj.Option;
 R = Option.spotR;   % radius (pixel) of diffraction limited spot
-img = double(RawImage);
+img = convert2double(RawImage);
+RawImD=double(RawImage);
+backg=Option.bg/max(RawImD(:));
 [molPixelIdx,BW] = RoughScan(obj,img);
 NumMolecule = length(obj.Molecule);
 
@@ -16,10 +18,10 @@ for k = 1:length(molPixelIdx)
     j = molPixelIdx{k}(2);
     subImage = img(i-R:i+R,j-R:j+R);
     BW_sub = BW(i-R:i+R,j-R:j+R);
-    CC_sub = bwconncomp(BW_sub);
+    CC_sub = bwconncomp(BW_sub); %output struct 
     
     % Deal with the above threshold pixels in the peripheral of subimage
-    N = numel(CC_sub.PixelIdxList);
+    N = numel(CC_sub.PixelIdxList); % number of objects in a subimage - should be 1
     if N > 1
         center_idx = 2*R^2+2*R+1;
         for l = 1:N
@@ -32,14 +34,14 @@ for k = 1:length(molPixelIdx)
     if strcmp(Option.fitting,'fast')
         % Perform centroid fitting. Subtract the location of the center
         % pixel to convert it to the distance from the center of the pixel.
-        % Eliminate potential moelecules in ROI
+        % Eliminate potential molecules in ROI
         edgeThreshold = Option.threshold;
         edgeImage = subImage; edgeImage(3:end-2, 3:end-2) = 0;
         subImage(edgeImage > edgeThreshold) = min(min(subImage));
         centroid = regionprops(true(size(subImage)),subImage,'WeightedCentroid');
         s = centroid.WeightedCentroid(2)-R-1+0.5;
         t = centroid.WeightedCentroid(1)-R-1+0.5;
-        obj.Molecule(NumMolecule+k).centroid = [s,t]*obj.Option.pixelSize;
+        obj.Molecule(NumMolecule+k).centroid = [s,t]*obj.Option.pixelSize; %centroid in nm
         if N > 1
             lengths = zeros(1,N);
             for l = 1:N
@@ -50,17 +52,17 @@ for k = 1:length(molPixelIdx)
         else
             pxlist = CC_sub.PixelIdxList{1};
         end
-        obj.Molecule(NumMolecule+k).volume = sum(sum(subImage(pxlist) - Option.bg));    
+        obj.Molecule(NumMolecule+k).volume = sum(sum(subImage(pxlist) - backg))*max(RawImD(:));    
         obj.Molecule(NumMolecule+k).area = length(pxlist)*Option.pixelSize^2;
-        obj.Molecule(NumMolecule+k).maxInt = max(max(subImage));
+        obj.Molecule(NumMolecule+k).maxInt = max(max(subImage))*max(RawImD(:));
     elseif strcmp(Option.fitting,'slow') && strcmp(Option.isolation,'fast')
-        % Eliminate potential moelecules in ROI
+        % Eliminate potential molecules in ROI
         edgeThreshold = Option.threshold;
         edgeImage = subImage; edgeImage(3:end-2, 3:end-2) = 0;
         subImage(edgeImage > edgeThreshold) = min(min(subImage));
-        try
+         try
             [obj.Molecule(NumMolecule+k).fit,obj.Molecule(NumMolecule+k).gof] = fit2D(obj,subImage);
-        catch
+         catch %if error in "try"
             disp('Unable to fit 2D Gaussian for the following molecule with adjusted ROI:');
             fprintf('%d, %d\n',i,j);
             disp(subImage);

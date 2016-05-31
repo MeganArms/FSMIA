@@ -43,15 +43,15 @@ end
     end
 
     function analyzetiffstack(obj,ImageFile)
-        info = imfinfo(ImageFile);
+        info = imfinfo(ImageFile); %image file info
         nFrame = numel(info);
         dsRate = obj.Option.ds;
         frames2analyze = 1:dsRate:nFrame;
         fprintf('Beginning analysis of %d frames, sampling every %d frames\n',nFrame,dsRate);
-        tic;
+        tic; 
         for k = frames2analyze
             NumMolecule = length(obj.Molecule);
-            rawImage = imread(ImageFile,k);
+            rawImage = imread(ImageFile,k); %k frame
             FineScan(obj,rawImage);
             for i = (NumMolecule+1):length(obj.Molecule)
                 obj.Molecule(i).frame = k;

@@ -50,7 +50,7 @@ Definitions:
 	* MoleculeIndex: A vector indexing the particles found in that frame. Listing is continuous across frames.
 - **Result**: structure with 1 field whose length is the number of particles that appear for more than one consecutive frame. The one field is:
 	* trajectory: each entry is a vector of the particle indices that are connected to each other. This information should match that in the To/From fields of the Molecule property.
-- **Intensity**: a matrix whose length is the number of particles that appear on more than one frame consecutively. The first column is the maximum volume integral of the particle over all the frames. The second column is the maximum maximum intensity of the volume integral over all the frames. The third column is the number of frames that the particle appears on consecutively. The fourth column is standard deviation of the fit to the point spread function.
+- **Intensity**: a matrix whose length is the number of particles that appear on more than one frame consecutively. The first column is the maximum volume integral of the particle over all the frames. The second column is the maximum intensity of the volume integral over all the frames. The third column is the number of frames that the particle appears on consecutively. The fourth column is standard deviation of the fit to the point spread function.
 
 
 ## Quick Start Guide to FSMIA
@@ -66,8 +66,8 @@ FilterGUI
 ```
 - Browse for the file to be analyzed. 
 - Enter the frame number to be filtered. 
-- Set the output file to the same as the input. Add “_filter###” to the end of the filename before the extension. Replace ### with the frame number that was filtered.
-- Click “uneven illumination” if there is uneven illumination to be corrected for.
+- Set the output file to the same as the input. Add “_filter###�? to the end of the filename before the extension. Replace ### with the frame number that was filtered.
+- Click “uneven illumination�? if there is uneven illumination to be corrected for.
 - Click OK to filter.
 - The recommended threshold will be output to the command window.
 
