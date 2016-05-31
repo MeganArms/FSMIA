@@ -6,7 +6,7 @@ Molecule = obj.Molecule;
 % exp_time = exp_time/1000; % Convert ms into seconds
 numTrajectories = length(Result);
 
-% Get the coordinates of the fist molecule in each trajectory
+% Get the coordinates of the first molecule in each trajectory
 firstMolecsCoords = zeros(numTrajectories,2);
 for i = 1:numTrajectories
     % Test to make sure that the trajectory file is strictly increasing
@@ -49,9 +49,9 @@ for i = 2:length(diffsMatrix)
     if EucDistMatrix(i) <= sqrt(2) && abs(i - prev_i) == 1
         if k == 1 % Then this is the first entry in the cell. Advance j by one to create a new cell.
             j = j + 1;
-            closeTrajs{1,j}(1,k) = sortedIndices(i-1);
+            closeTrajs{1,j}(1,k) = sortedIndices(i-1); %index
             closeTrajs{1,j}(1,k+1) = sortedIndices(i);
-            closeTrajs{1,j}(2:3,k) = sortedFirstMolecs(i-1,:)';
+            closeTrajs{1,j}(2:3,k) = sortedFirstMolecs(i-1,:)'; %coordinates of molecule where it was/where it is going
             closeTrajs{1,j}(2:3,k+1) = sortedFirstMolecs(i,:)';
             k = k+2;
         else % Fill the cell with the closest trajectories
@@ -110,8 +110,8 @@ emptyTrajNums = [];
 J = 0;
 i = 1;
 while i <= length(traj2connect_withUpdates)
-    n = length(traj2connect_withUpdates{i});
-    N = length(traj2connect_withUpdates);
+    n = length(traj2connect_withUpdates{i}); %trajectory we're at
+    N = length(traj2connect_withUpdates); %Number traj left to be done
     trajComplete{i} = (Result(traj2connect_withUpdates{i}(1)).trajectory)'; % Transpose because the trajectories are in columns
     % longTraj(traj2connect{i}(1)).trajectory = []; % Set the consolidated trajectories to empty
     % replacementTrajNums(i) = traj2connect{i}(1);
